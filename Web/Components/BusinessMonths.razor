@@ -1,0 +1,27 @@
+@using Models;
+<table class="table table-striped">
+    @foreach (var row in DateTime.UtcNow.GetDecadeMonths().GroupBy(pair => pair.year))
+    {
+        <tr>
+            @foreach (var (year, month) in ForTimestamp.GetYearsMonths())
+            {
+                if (month == 1)
+                {
+                    <th>@row.First().year</th>
+                }
+
+                <td>@($"{MonthNames[month]}")</td>
+            }
+        </tr>
+        
+    }
+</table>
+@code {
+    [Parameter] public DateTime ForTimestamp { get; set; }
+
+    string[] MonthNames = new[]
+    {
+        "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    };
+
+}
