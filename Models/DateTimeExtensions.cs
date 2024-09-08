@@ -2,17 +2,14 @@
 
 using static Enumerable;
 
-
 public static class DateTimeExtensions
 {
-    public static IEnumerable<Month> GetYearsMonths(this DateTime time) =>
-        time.Year.GetYearMonths();
+    public static Year ToYear(this DateTime time) => new Year(time.Year);
 
     public static IEnumerable<Month> GetDecadeMonths(this DateTime time) =>
-        Range(time.Year.ToDecadeBeginning(), 10).SelectMany(GetYearMonths);
-
+        Range(time.Year.ToDecadeBeginning(), 10)
+            .Select(year => new Year(year))
+            .SelectMany(year => year.Months);
+    
     private static int ToDecadeBeginning(this int year) => year / 10 * 10 + 1;
-
-    private static IEnumerable<Month> GetYearMonths(this int year) =>
-        Range(1, 12).Select(month => new Month(year, month));
 }
