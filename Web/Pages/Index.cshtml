@@ -1,5 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Models.Media
 @using Models.Types
 @using Web.Components
 @model IndexModel
@@ -20,6 +21,7 @@
             <th>@(++ordinal)</th>
             <th>@part.Name</th>
             <th>@part.Sku.Value</th>
+            <td><img src="data:@part.Sku.ToCode39(25).EncodeBase64().Content"/></td>
         </tr>
     }
 </table>
