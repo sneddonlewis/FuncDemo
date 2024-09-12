@@ -1,7 +1,13 @@
+using Application.Persistence;
+using Models.Types;
+using TestPersistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IReadOnlyRepo<Part>, PartsReadRepo>();
 
 var app = builder.Build();
 

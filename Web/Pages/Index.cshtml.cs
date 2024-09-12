@@ -1,18 +1,22 @@
-using Microsoft.AspNetCore.Mvc;
+using Application.Persistence;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Models.Types;
 
 namespace Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    private IReadOnlyRepo<Part> Parts { get; }
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel(IReadOnlyRepo<Part> parts)
     {
-        _logger = logger;
+        this.Parts = parts;
     }
+
+    public IEnumerable<Part> AllParts { get; set; } = Enumerable.Empty<Part>();
 
     public void OnGet()
     {
+        this.AllParts = this.Parts.GetAll().ToList();
     }
 }

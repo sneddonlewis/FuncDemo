@@ -1,4 +1,6 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Models.Types
 @using Web.Components
 @model IndexModel
 @{
@@ -6,6 +8,18 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <component type="typeof(BusinessMonths)" render-mode="ServerPrerendered"/>
+    @* <component type="typeof(BusinessMonths)" render-mode="ServerPrerendered"/> *@
 </div>
+
+<table class="table table-striped">
+    @{ int ordinal = 0;}    
+    <tr><th>#</th><th>Name</th><th>SKU</th></tr>
+    @foreach (Part part in Model.AllParts.OrderBy(part => part.Name))
+    {
+        <tr>
+            <th>@(++ordinal)</th>
+            <th>@part.Name</th>
+            <th>@part.Sku.Value</th>
+        </tr>
+    }
+</table>
