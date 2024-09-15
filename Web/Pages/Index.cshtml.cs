@@ -13,6 +13,11 @@ public class IndexModel : PageModel
         this.Parts = parts;
     }
 
+    void F()
+    {
+        Part part = new Part("Something", new("SOMESKU"));
+    }
+
     public IEnumerable<Part> AllParts { get; set; } = Enumerable.Empty<Part>();
 
     public void OnGet()
