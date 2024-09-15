@@ -7,21 +7,25 @@ namespace Models.Media;
 
 public static class BarcodeGeneration
 {
-    public static FileContent ToCode39(this StockKeepingUnit sku, int barHeight) =>
-        sku.Value.ToCode39Bars().ToCode39Bitmap(barHeight).ToPng();
+    public record Margins(float Horizontal, float Vertical, float BarHeight);
 
-    private static SKBitmap ToCode39Bitmap(this IEnumerable<int> bars, int barHeight) =>
-        bars.ToGraphicalLines().ToBarcodeBitmap(barHeight);
+    public record Style(float ThinBarWidth, float ThickBarWidth, float GapWidth, float Padding, bool AntiAlias);
+    
+    public static FileContent ToCode39(this StockKeepingUnit sku, Margins margins, Style style) =>
+        sku.Value.ToCode39Bars().ToCode39Bitmap(margins, style).ToPng();
 
-    private static SKPaint[] ToGraphicalLines(this IEnumerable<int> bars) =>
-        bars.ToGraphicalLines(Gap, ThinBar, ThickBar);
+    private static SKBitmap ToCode39Bitmap(this IEnumerable<int> bars, Margins margins, Style style) =>
+        bars.ToGraphicalLines(style).ToBarcodeBitmap(margins, style);
+
+    private static SKPaint[] ToGraphicalLines(this IEnumerable<int> bars, Style style) =>
+        bars.ToGraphicalLines(Gap(style), ThinBar(style), ThickBar(style));
 
     private static SKPaint[] ToGraphicalLines(this IEnumerable<int> bars, params SKPaint[] lines) =>
         bars.Select(bar => lines[bar]).ToArray();
 
-    private static SKPaint ThickBar => Bar(SKColors.Black, 4.0f);
-    private static SKPaint ThinBar => Bar(SKColors.Black, 1.5f);
-    private static SKPaint Gap => Bar(SKColors.Transparent, 2.0f);
+    private static SKPaint ThickBar(Style style) => Bar(SKColors.Black, style.ThickBarWidth);
+    private static SKPaint ThinBar(Style style) => Bar(SKColors.Black, style.ThinBarWidth);
+    private static SKPaint Gap(Style style) => Bar(SKColors.Transparent, style.GapWidth);
 
     private static SKPaint Bar(SKColor color, float thickness) => new SKPaint
     {
@@ -32,11 +36,14 @@ public static class BarcodeGeneration
         IsAntialias = true,
     };
 
-    private static SKBitmap ToBarcodeBitmap(this SKPaint[] bars, int barHeight)
+    private static SKBitmap ToBarcodeBitmap(this SKPaint[] bars, Margins margins, Style style)
     {
-        float horizontalMargin = 5.0f;
-        float verticalMargin = 3.0f;
-        float padding = 2.0f;
+        float horizontalMargin = margins.Horizontal;
+        float verticalMargin = margins.Vertical;
+        float barHeight = margins.BarHeight;
+        
+        float padding = style.Padding;
+        
         float barsWidth = bars.Sum(bar => bar.StrokeWidth);
         float height = barHeight + 2 * verticalMargin;
         float width = barsWidth + (bars.Length - 1) * padding + 2 * horizontalMargin;

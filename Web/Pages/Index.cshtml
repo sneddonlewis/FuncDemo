@@ -21,7 +21,7 @@
             <th>@(++ordinal)</th>
             <th>@part.Name</th>
             <th>@part.Sku.Value</th>
-            <td><img src="data:@part.Sku.ToCode39(25).EncodeBase64().Content"/></td>
+            <td><img src="data:@part.Sku.ToCode39(@Model.Margins, @Model.Style).EncodeBase64().Content"/></td>
         </tr>
     }
 </table>
